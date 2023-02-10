@@ -22,7 +22,6 @@ It uses three microservices:
 ### Installation
 
 * The example is implemented in Java . The examples need to be compiled, so you need to install a JDK (Java Development Kit). A JRE (Java Runtime Environment) is not sufficient. You should be able to execute java and javac on the command line.
-*
 * The example run in Docker Containers. You need to install Docker Community Edition, see https://www.docker.com/community-edition/ . You should be able to run docker after the installation.
 
 * The example need a lot of RAM. You should configure Docker to use 4 GB of RAM otherwise Docker containers might be killed due to lack of RAM.
