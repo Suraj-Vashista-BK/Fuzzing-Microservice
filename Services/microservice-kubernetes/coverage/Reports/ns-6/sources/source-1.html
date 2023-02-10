@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CatalogClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ewolff.microservice.order.clients</a>
+</div>
+
+<h1>Coverage Summary for Class: CatalogClient (com.ewolff.microservice.order.clients)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CatalogClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (20/20)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CatalogClient$ItemPagedResources</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ewolff.microservice.order.clients;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Collections;
+&nbsp;
+&nbsp;import org.slf4j.Logger;
+&nbsp;import org.slf4j.LoggerFactory;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.beans.factory.annotation.Value;
+&nbsp;import org.springframework.hateoas.MediaTypes;
+&nbsp;import org.springframework.hateoas.PagedModel;
+&nbsp;import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
+&nbsp;import org.springframework.http.converter.HttpMessageConverter;
+&nbsp;import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.client.RestTemplate;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.DeserializationFeature;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;
+&nbsp;@Component
+&nbsp;public class CatalogClient {
+&nbsp;
+<b class="fc">&nbsp;	private final Logger log = LoggerFactory.getLogger(CatalogClient.class);</b>
+&nbsp;
+<b class="fc">&nbsp;	public static class ItemPagedResources extends PagedModel&lt;Item&gt; {</b>
+&nbsp;
+&nbsp;	}
+&nbsp;
+&nbsp;	private RestTemplate restTemplate;
+&nbsp;	private String catalogServiceHost;
+&nbsp;	private long catalogServicePort;
+&nbsp;
+&nbsp;	@Autowired
+&nbsp;	public CatalogClient(@Value(&quot;${catalog.service.host:catalog}&quot;) String catalogServiceHost,
+&nbsp;			@Value(&quot;${catalog.service.port:8080}&quot;) long catalogServicePort) {
+<b class="fc">&nbsp;		super();</b>
+<b class="fc">&nbsp;		this.restTemplate = getRestTemplate();</b>
+<b class="fc">&nbsp;		this.catalogServiceHost = catalogServiceHost;</b>
+<b class="fc">&nbsp;		this.catalogServicePort = catalogServicePort;</b>
+<b class="fc">&nbsp;	}</b>
+&nbsp;
+&nbsp;	protected RestTemplate getRestTemplate() {
+<b class="fc">&nbsp;		ObjectMapper mapper = new ObjectMapper();</b>
+<b class="fc">&nbsp;		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);</b>
+<b class="fc">&nbsp;		mapper.registerModule(new Jackson2HalModule());</b>
+&nbsp;
+<b class="fc">&nbsp;		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();</b>
+<b class="fc">&nbsp;		converter.setSupportedMediaTypes(Arrays.asList(MediaTypes.HAL_JSON));</b>
+<b class="fc">&nbsp;		converter.setObjectMapper(mapper);</b>
+&nbsp;
+<b class="fc">&nbsp;		return new RestTemplate(Collections.&lt;HttpMessageConverter&lt;?&gt;&gt;singletonList(converter));</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public double price(long itemId) {
+<b class="fc">&nbsp;		return getOne(itemId).getPrice();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Collection&lt;Item&gt; findAll() {
+<b class="fc">&nbsp;		PagedModel&lt;Item&gt; pagedResources = restTemplate.getForObject(catalogURL(), ItemPagedResources.class);</b>
+<b class="fc">&nbsp;		return pagedResources.getContent();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private String catalogURL() {
+<b class="fc">&nbsp;		String url = String.format(&quot;http://%s:%s/catalog/&quot;, catalogServiceHost, catalogServicePort);</b>
+<b class="fc">&nbsp;		log.trace(&quot;Catalog: URL {} &quot;, url);</b>
+<b class="fc">&nbsp;		return url;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Item getOne(long itemId) {
+<b class="fc">&nbsp;		return restTemplate.getForObject(catalogURL() + itemId, Item.class);</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-10 11:20</div>
+</div>
+</body>
+</html>

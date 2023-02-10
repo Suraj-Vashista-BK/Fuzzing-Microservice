@@ -2,3 +2,7 @@
 	path = Services/microService/submodule
 	url = https://github.com/Suraj-Vashista-BK/microservice
 	branch = master
+[submodule "Services/microservice-kubernetes/submodule"]
+	path = Services/microservice-kubernetes/submodule
+	url = https://github.com/Suraj-Vashista-BK/microservice-kubernetes
+	branch = master
