@@ -42,4 +42,4 @@ You can access:
 * The Eureka dashboard at http://localhost:8761/
 * The Hystrix dashboard at http://localhost:8989/
 
-You can terminate all containers using docker-compose down.
+You can terminate all containers using `docker-compose down`.
