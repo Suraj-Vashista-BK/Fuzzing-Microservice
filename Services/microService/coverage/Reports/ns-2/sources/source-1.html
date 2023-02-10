@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CatalogController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.ewolff.microservice.catalog.web</a>
+</div>
+
+<h1>Coverage Summary for Class: CatalogController (com.ewolff.microservice.catalog.web)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CatalogController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44.4%
+  </span>
+  <span class="absValue">
+    (4/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35.7%
+  </span>
+  <span class="absValue">
+    (5/14)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.ewolff.microservice.catalog.web;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestMethod;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.servlet.ModelAndView;
+&nbsp;
+&nbsp;import com.ewolff.microservice.catalog.Item;
+&nbsp;import com.ewolff.microservice.catalog.ItemRepository;
+&nbsp;
+&nbsp;@Controller
+&nbsp;public class CatalogController {
+&nbsp;
+&nbsp;	private final ItemRepository itemRepository;
+&nbsp;
+&nbsp;	@Autowired
+<b class="fc">&nbsp;	public CatalogController(ItemRepository itemRepository) {</b>
+<b class="fc">&nbsp;		this.itemRepository = itemRepository;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/{id}.html&quot;, method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+&nbsp;	public ModelAndView Item(@PathVariable(&quot;id&quot;) long id) {
+<b class="fc">&nbsp;		return new ModelAndView(&quot;item&quot;, &quot;item&quot;, itemRepository.findById(id).get());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/list.html&quot;, method = RequestMethod.GET)
+&nbsp;	public ModelAndView ItemList() {
+<b class="nc">&nbsp;		return new ModelAndView(&quot;itemlist&quot;, &quot;items&quot;, itemRepository.findAll());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/form.html&quot;, method = RequestMethod.GET)
+&nbsp;	public ModelAndView add() {
+<b class="nc">&nbsp;		return new ModelAndView(&quot;item&quot;, &quot;item&quot;, new Item());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/form.html&quot;, method = RequestMethod.POST)
+&nbsp;	public ModelAndView post(Item Item) {
+<b class="nc">&nbsp;		Item = itemRepository.save(Item);</b>
+<b class="nc">&nbsp;		return new ModelAndView(&quot;success&quot;);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/{id}.html&quot;, method = RequestMethod.PUT)
+&nbsp;	public ModelAndView put(@PathVariable(&quot;id&quot;) long id, Item item) {
+<b class="nc">&nbsp;		item.setId(id);</b>
+<b class="nc">&nbsp;		itemRepository.save(item);</b>
+<b class="nc">&nbsp;		return new ModelAndView(&quot;success&quot;);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/searchForm.html&quot;, produces = MediaType.TEXT_HTML_VALUE, method = RequestMethod.GET)
+&nbsp;	public ModelAndView searchForm() {
+<b class="fc">&nbsp;		return new ModelAndView(&quot;searchForm&quot;);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/searchByName.html&quot;, produces = MediaType.TEXT_HTML_VALUE, method = RequestMethod.GET)
+&nbsp;	public ModelAndView search(@RequestParam(&quot;query&quot;) String query) {
+<b class="fc">&nbsp;		return new ModelAndView(&quot;itemlist&quot;, &quot;items&quot;, itemRepository.findByNameContaining(query));</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@RequestMapping(value = &quot;/{id}.html&quot;, method = RequestMethod.DELETE)
+&nbsp;	public ModelAndView delete(@PathVariable(&quot;id&quot;) long id) {
+<b class="nc">&nbsp;		itemRepository.deleteById(id);</b>
+<b class="nc">&nbsp;		return new ModelAndView(&quot;success&quot;);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-02-08 10:25</div>
+</div>
+</body>
+</html>
