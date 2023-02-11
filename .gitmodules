@@ -6,3 +6,7 @@
 	path = Services/microservice-kubernetes/submodule
 	url = https://github.com/Suraj-Vashista-BK/microservice-kubernetes
 	branch = master
+[submodule "Services/LakesideMutual/submodule"]
+	path = Services/LakesideMutual/submodule
+	url = https://github.com/Suraj-Vashista-BK/LakesideMutual
+	branch = modified-branch
