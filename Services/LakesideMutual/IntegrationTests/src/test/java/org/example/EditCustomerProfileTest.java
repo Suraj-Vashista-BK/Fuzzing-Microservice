@@ -14,7 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class EditCustomerProfile {
+public class EditCustomerProfileTest {
 
     public HttpResponse getHttpHelper(String url, String token) throws Exception{
         HttpClient httpClient = HttpClientBuilder.create().build();

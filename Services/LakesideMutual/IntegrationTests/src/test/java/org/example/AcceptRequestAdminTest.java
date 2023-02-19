@@ -1,79 +1,95 @@
 package org.example;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.HttpResponse;
 
-import org.apache.http.util.EntityUtils;
+
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.lang.Thread;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class RejectRequestAdminTest  {
+public class AcceptRequestAdminTest {
 
-    public HttpResponse postHttpHelper(JSONObject data, String url, String token) throws Exception {
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(url);
-        StringEntity params = new StringEntity(data.toString());
-        request.addHeader("content-type", "application/json");
-        request.addHeader("X-Auth-Token", token);
-        request.setEntity(params);
-        HttpResponse response = httpClient.execute(request);
+    HttpResponse patchHttpHelper(JSONObject data, String url) throws Exception{
+        HttpClient httpClient = HttpClient.newBuilder().build();
+
+        HttpRequest.BodyPublisher param = HttpRequest.BodyPublishers.ofString(data.toString());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .method("PATCH", param)
+                .header("Content-Type", "application/json")
+                .build();
+
+        HttpResponse response = httpClient.send(request,HttpResponse.BodyHandlers.ofString());
+        System.out.println(response);
         return response;
     }
 
-    public HttpResponse patchHttpHelper(JSONObject data, String url) throws Exception {
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPatch request = new HttpPatch(url);
-        StringEntity params = new StringEntity(data.toString());
-        request.addHeader("content-type", "application/json");
-        request.setEntity(params);
-        HttpResponse response = httpClient.execute(request);
+    HttpResponse postHttpHelper(JSONObject data, String url, String token) throws Exception{
+        HttpClient httpClient = HttpClient.newBuilder().build();
+
+        HttpRequest.BodyPublisher param = HttpRequest.BodyPublishers.ofString(data.toString());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .method("POST", param)
+                .header("Content-Type", "application/json")
+                .header("X-Auth-Token", token)
+                .build();
+
+        HttpResponse response = httpClient.send(request,HttpResponse.BodyHandlers.ofString());
         return response;
     }
 
 
     public HttpResponse getHttpHelper(String url, String token) throws Exception{
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(url);
-        request.addHeader("content-type", "application/json");
-        if (!token.equals("")){
-            request.addHeader("X-Auth-Token", token);
+        HttpClient httpClient = HttpClient.newBuilder().build();
+        HttpRequest request;
+        if (!token.equals("")) {
+            request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .header("Content-Type", "application/json")
+                    .header("X-Auth-Token", token)
+                    .build();
         }
-        HttpResponse response = httpClient.execute(request);
+        else {
+            request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .header("Content-Type", "application/json")
+                    .build();
+        }
+        HttpResponse response = httpClient.send(request,HttpResponse.BodyHandlers.ofString());
         return response;
     }
 
     public JSONObject parseResponse(HttpResponse response) throws Exception {
-        String respString = EntityUtils.toString(response.getEntity());
-        JSONObject respJson = new JSONObject(respString);
+        JSONObject respJson = new JSONObject(response.body().toString());
         return respJson;
     }
 
     public JSONObject parseResponseInsurance(HttpResponse response) throws Exception {
-        String respString = EntityUtils.toString(response.getEntity());
-        JSONArray respArray = new JSONArray(respString);
+        JSONArray respArray = new JSONArray(response.body().toString());
         JSONObject respJson = new JSONObject();
         respJson = respArray.getJSONObject(0);
         return respJson;
     }
 
     @Test
-    public void rejectTest() throws Exception{
+    public void AcceptTest() throws Exception{
         String email = "admin@example.com";
         String password = "1password";
         String insuranceType = "Car Insurance";
         String status = "REQUEST_SUBMITTED";
+        String status2 = "QUOTE_RECEIVED";
         String authUrl = "http://localhost:8080/auth";
         String custIdUrl = "http://localhost:8080/user";
         String insUrl = "http://localhost:8080/insurance-quote-requests";
@@ -86,8 +102,7 @@ public class RejectRequestAdminTest  {
         credentials.put("password",password);
 
         HttpResponse response = postHttpHelper(credentials, authUrl, "");
-
-        Integer responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
+        Integer responseCode = Integer.valueOf(String.valueOf(response.statusCode()));
         JSONObject respJson = parseResponse(response);
         String responseEmail = (String) respJson.get("email");
         String responseToken = (String) respJson.get("token");
@@ -99,7 +114,7 @@ public class RejectRequestAdminTest  {
 
 //      test customer id
         response = getHttpHelper(custIdUrl, responseToken);
-        responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
+        responseCode = Integer.valueOf(String.valueOf(response.statusCode()));
         respJson = parseResponse(response);
         String customerId = (String) respJson.get("customerId");
         responseEmail = (String) respJson.get("email");
@@ -109,7 +124,7 @@ public class RejectRequestAdminTest  {
         assertNotNull(customerId);
 
 
-//      Request policy quote
+//      Request policy quote from customer
         JSONObject billing = new JSONObject();
         billing.put("city", "Rapperswil");
         billing.put("postalCode", "8640");
@@ -141,10 +156,9 @@ public class RejectRequestAdminTest  {
         policyData.put("insuranceOptions", insuranceInfo);
 
         response = postHttpHelper(policyData, insUrl, responseToken);
-        responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
+        responseCode = Integer.valueOf(String.valueOf(response.statusCode()));
         respJson = parseResponse(response);
         JSONArray jsonarray = (JSONArray) respJson.get("statusHistory");
-        System.out.println(respJson);
         JSONObject statusObj = new JSONObject();
         statusObj = jsonarray.getJSONObject(0);
         JSONObject insurance = new JSONObject();
@@ -155,16 +169,14 @@ public class RejectRequestAdminTest  {
         assertEquals(insuranceType, insurance.get("insuranceType"));
 
         Integer requestId = (Integer) respJson.get("id");
-        System.out.println(requestId);
 
         Thread.sleep(5000);
 
 
 //      Use request ID to see if admin received request
         response = getHttpHelper(quoteUrl, "");
-        responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
+        responseCode = Integer.valueOf(String.valueOf(response.statusCode()));
         respJson = parseResponseInsurance(response);
-        System.out.println(respJson);
         insurance = respJson.getJSONObject("insuranceOptions");
 
         assertEquals(Integer.valueOf(200), responseCode);
@@ -172,7 +184,7 @@ public class RejectRequestAdminTest  {
         assertEquals(insuranceType, insurance.get("insuranceType"));
 
 
-//      Accept quote
+//      Admin accept quote
         insuranceInfo = new JSONObject();
         insuranceInfo.put("amount", 2);
         insuranceInfo.put("currency", "CHF");
@@ -187,14 +199,24 @@ public class RejectRequestAdminTest  {
         quoteData.put("policyLimit", policyData);
         quoteData.put("status", "QUOTE_RECEIVED");
 
-        String patchUrl = quoteUrl + "/" + requestId + "/true";
-        System.out.println(patchUrl);
-        System.out.println(quoteData);
-        response = patchHttpHelper(quoteData, quoteUrl);
-        System.out.println(response);
-        responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
+        String patchUrl = quoteUrl + "/" + requestId;
+        response = patchHttpHelper(quoteData, patchUrl);
+        responseCode = Integer.valueOf(String.valueOf(response.statusCode()));
         assertEquals(Integer.valueOf(200), responseCode);
 
 
+//        Verify status
+        respJson = parseResponse(response);
+        jsonarray = (JSONArray) respJson.get("statusHistory");
+        statusObj = new JSONObject();
+        statusObj = jsonarray.getJSONObject(1);
+        insurance = new JSONObject();
+        insurance = respJson.getJSONObject("insuranceOptions");
+
+        assertEquals(Integer.valueOf(200), responseCode);
+        assertEquals(status2, statusObj.get("status"));
+        assertEquals(insuranceType, insurance.get("insuranceType"));
+        System.out.println(statusObj.get("status"));
+        System.out.println(insurance.get("insuranceType"));
     }
 }

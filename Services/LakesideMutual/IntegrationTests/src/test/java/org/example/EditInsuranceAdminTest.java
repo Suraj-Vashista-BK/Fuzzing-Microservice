@@ -1,7 +1,6 @@
 package org.example;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -11,11 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
-public class EditInsuranceAdmin {
+public class EditInsuranceAdminTest {
 
     public HttpResponse getHttpHelper(String url, String token) throws Exception{
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -142,7 +140,6 @@ public class EditInsuranceAdmin {
                 assertEquals(Integer.valueOf(200), responseCode);
 
 //                verify
-
                 response = getHttpHelper(policyDetailUrl, "");
                 respJson = parseResponse(response);
                 deductible = respJson.getJSONObject("deductible");

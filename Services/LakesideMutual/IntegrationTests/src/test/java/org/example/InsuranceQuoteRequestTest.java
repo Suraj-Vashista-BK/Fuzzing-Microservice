@@ -14,7 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class InsuranceQuoteRequest {
+public class InsuranceQuoteRequestTest {
 
     public HttpResponse postHttpHelper(JSONObject data, String url, String token) throws Exception {
         HttpClient httpClient = HttpClientBuilder.create().build();
