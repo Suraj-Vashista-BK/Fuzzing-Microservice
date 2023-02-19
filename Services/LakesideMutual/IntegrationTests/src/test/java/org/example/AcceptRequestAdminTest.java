@@ -32,7 +32,7 @@ public class RejectRequestAdminTest  {
         return response;
     }
 
-    public HttpResponse putHttpHelper(JSONObject data, String url) throws Exception {
+    public HttpResponse patchHttpHelper(JSONObject data, String url) throws Exception {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPatch request = new HttpPatch(url);
         StringEntity params = new StringEntity(data.toString());
@@ -190,7 +190,7 @@ public class RejectRequestAdminTest  {
         String patchUrl = quoteUrl + "/" + requestId + "/true";
         System.out.println(patchUrl);
         System.out.println(quoteData);
-        response = putHttpHelper(quoteData, quoteUrl);
+        response = patchHttpHelper(quoteData, quoteUrl);
         System.out.println(response);
         responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
         assertEquals(Integer.valueOf(200), responseCode);
