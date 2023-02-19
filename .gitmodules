@@ -10,3 +10,7 @@
 	path = Services/LakesideMutual/submodule
 	url = https://github.com/Suraj-Vashista-BK/LakesideMutual
 	branch = modified-branch
+[submodule "Services/WebshopUI/submodule"]
+	path = Services/WebshopUI/submodule
+	url = https://github.com/Suraj-Vashista-BK/research-modifiability-pattern-experiment
+	branch = master
