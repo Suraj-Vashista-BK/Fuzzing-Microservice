@@ -58,7 +58,7 @@ public class CustomerCreditRatingFailureTest {
 
         }
         else{
-            System.out.println("Not enough success customers. Test success");
+            System.out.println("Not enough success customers in database. Test success");
         }
 
     }
