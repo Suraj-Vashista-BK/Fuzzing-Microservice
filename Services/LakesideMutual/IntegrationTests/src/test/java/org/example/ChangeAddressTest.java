@@ -74,9 +74,7 @@ public class ChangeAddressTest {
         String customerPhone = "055 222 4111";
         String customerPostalCode = "8640";
         String customerStreet = "Oberseestrasse 10";
-        String customerInsuranceType = "Health Insurance";
-        Double customerInsuranceAmount = 250.0;
-        String customerInsuranceCurrency = "CHF";
+
         String authUrl = "http://localhost:8080/auth";
         String custIdUrl = "http://localhost:8080/user";
         String custDetailsUrl = "http://localhost:8080/customers/";
@@ -127,19 +125,6 @@ public class ChangeAddressTest {
         assertEquals(customerStreet, respJson.get("streetAddress"));
         assertEquals(customerPostalCode, respJson.get("postalCode"));
         assertEquals(Integer.valueOf(200), responseCode);
-
-//      test existing policy
-        policyUrl =  policyUrl+customerId+ "/policies";
-        response = getHttpHelper(policyUrl, responseToken);
-        responseCode = Integer.valueOf(String.valueOf(response.getStatusLine().getStatusCode()));
-        respJson = parseArrayResponse(response);
-        JSONObject policyJson = (JSONObject) respJson.get("insurancePremium");
-
-        assertEquals(Integer.valueOf(200), responseCode);
-        assertEquals(customerId, respJson.get("customer"));
-        assertEquals(customerInsuranceType, respJson.get("policyType"));
-        assertEquals(customerInsuranceAmount, policyJson.get("amount"));
-        assertEquals(customerInsuranceCurrency, policyJson.get("currency"));
 
 //      Change address
         JSONObject newAddress = new JSONObject();

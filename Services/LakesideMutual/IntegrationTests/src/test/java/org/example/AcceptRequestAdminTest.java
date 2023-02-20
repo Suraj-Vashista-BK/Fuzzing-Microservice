@@ -1,8 +1,6 @@
 package org.example;
 
 
-
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
